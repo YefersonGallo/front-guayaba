@@ -72,6 +72,15 @@ function App() {
         setDay(day)
     }
 
+    const getTitle = (station) => {
+        if (station === 4) {
+            return "4 (Corte)"
+        } else if (station === 42) {
+            return "4 (Empacado)"
+        }
+        return station
+    }
+
     return (
         <div className="App">
             <nav className="navbar tile is-parent box" role="navigation" aria-label="main navigation">
@@ -108,8 +117,8 @@ function App() {
                     <div hidden={buttons !== 0}>
                         <div className="tile is-child buttons">
                             <button className="button is-primary" onClick={() => {
-                                changeButton(1)
                                 send_info()
+                                changeButton(1)
                             }}>Iniciar
                             </button>
                             <button className="button is-link" onClick={() => changeButton(2)}>Modificar Tiempos
@@ -291,7 +300,11 @@ function App() {
                                                         </button>
                                                         <button className="button is-danger"
                                                                 onClick={() => onClickButton(4, i)}>Estación
-                                                            4
+                                                            4 (Corte)
+                                                        </button>
+                                                        <button className="button is-danger"
+                                                                onClick={() => onClickButton(42, i)}>Estación
+                                                            4 (Empacado)
                                                         </button>
                                                         <button className="button is-link"
                                                                 onClick={() => onClickButton(5, i)}>Estación
@@ -313,20 +326,20 @@ function App() {
             </div>
             {
                 button && <div className={`modal ${modal}`}>
-                    <div className="modal-background" />
+                    <div className="modal-background"/>
                     <div className="modal-card">
                         <header className="modal-card-head">
-                            <p className="modal-card-title">Estación {station} - día {day+1}</p>
+                            <p className="modal-card-title">Estación {getTitle(station)} - día {day + 1}</p>
                             <button className="delete" aria-label="close" onClick={() => {
                                 setModal("");
                                 setButton(false)
-                            }} />
+                            }}/>
                         </header>
                         <section className="modal-card-body">
-                            <h1 className="title">Los resultados de la estación {station} en el
+                            <h1 className="title">Los resultados de la estación {getTitle(station)} en el
                                 día {day + 1} son:</h1>
-                            <h2 className="subtitle">En este día
-                                pasaron {info[`station_${station}_day_${day}`]["station"]} por la estación y habían {Object.keys(info[`station_${station}_day_${day}`]["info"]).length} en la cola</h2>
+                            <h2 className="subtitle">Quedaron esperando {info[`station_${station}_day_${day}`]["station"]} por entrar y
+                                entraron {Object.keys(info[`station_${station}_day_${day}`]["info"]).length} a la estación</h2>
                             <table className="table">
                                 <thead>
                                 <tr>
@@ -335,10 +348,10 @@ function App() {
                                     <th><abbr title="et">Et</abbr></th>
                                     <th><abbr title="exit">Salida</abbr></th>
                                     <th><abbr title="wt">Tiempo de espera</abbr></th>
-                                    <th><abbr title="day">Día</abbr></th>
+                                    <th><abbr title="day">Día de ingreso</abbr></th>
                                     <th><abbr title="mold">Moldeo</abbr></th>
                                     <th><abbr title="cut">Corte</abbr></th>
-                                    <th><abbr title="finish_cut">Corte finalizado</abbr></th>
+                                    <th><abbr title="finish_cut">Empacado</abbr></th>
                                 </tr>
                                 </thead>
                                 <tfoot>
@@ -348,26 +361,26 @@ function App() {
                                     <th><abbr title="et">Et</abbr></th>
                                     <th><abbr title="exit">Salida</abbr></th>
                                     <th><abbr title="wt">Tiempo de espera</abbr></th>
-                                    <th><abbr title="day">Día</abbr></th>
+                                    <th><abbr title="day">Día de ingreso</abbr></th>
                                     <th><abbr title="mold">Moldeo</abbr></th>
                                     <th><abbr title="cut">Corte</abbr></th>
-                                    <th><abbr title="finish_cut">Corte finalizado</abbr></th>
+                                    <th><abbr title="finish_cut">Empacado</abbr></th>
                                 </tr>
                                 </tfoot>
                                 <tbody>
                                 {
-                                    Object.values(info[`station_${station}_day_${day}`]["info"]).map((iter) =>{
-                                        return(
+                                    Object.values(info[`station_${station}_day_${day}`]["info"]).map((iter, value) => {
+                                        return (
                                             <tr>
-                                                <td>{iter["at"]}</td>
-                                                <td>{iter["start"]}</td>
-                                                <td>{iter["et"]}</td>
-                                                <td>{iter["exit"]}</td>
-                                                <td>{iter["wt"]}</td>
-                                                <td>{iter["day"]}</td>
-                                                <td>{iter["dayMold"]}</td>
-                                                <td>{iter["dayCut"]}</td>
-                                                <td>{iter["dayFinishCut"]}</td>
+                                                <td>{info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["at"]}</td>
+                                                <td>{info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["start"]}</td>
+                                                <td>{info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["et"]}</td>
+                                                <td>{info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["exit"]}</td>
+                                                <td>{info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["wt"]}</td>
+                                                <td>{info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["day"] !== -1 ? info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["day"] + 1 : info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["day"]}</td>
+                                                <td>{info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["dayMold"] !== -1 ? info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["dayMold"] + 1 : info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["dayMold"]}</td>
+                                                <td>{info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["dayCut"] !== -1 ? info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["dayCut"] + 1 : info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["dayCut"]}</td>
+                                                <td>{info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["dayFinishCut"] !== -1 ? info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["dayFinishCut"] + 1 : info[`station_${station}_day_${day}`]["info"][`station_${station}_day_${day}_${value}`]["dayFinishCut"]}</td>
                                             </tr>
                                         )
                                     })
@@ -381,7 +394,7 @@ function App() {
                             onClick={() => {
                                 setModal("");
                                 setButton(false)
-                            }} />
+                            }}/>
                 </div>
             }
             <footer className="footer is-fixed-bottom">
